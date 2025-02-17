@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // when ever the value of STATE variable changes
 // the component is Re-Rendered (Re-Run) (line - by -line)
@@ -36,6 +36,25 @@ const App = () => {
         localStorage.setItem("isLoggedIn", true);
         setCurrUser(newStateOfUser);
     };
+
+    const getLoggedInUserInfo = async () => {
+        const resp = await fetch(import.meta.env.VITE_BACKEND_URL + "/users/me", {
+            credentials: "include",
+        }); // be default the method of fetch is "GET", so I am not writing it
+        const respObj = await resp.json();
+        console.log(respObj);
+        setCurrUser({
+            isLoggedIn: true,
+            fullName: respObj.data.user.fullName,
+            email: respObj.data.user.email,
+        });
+    };
+
+    useEffect(() => {
+        if (currUser.isLoggedIn) {
+            getLoggedInUserInfo();
+        }
+    }, []);
 
     return (
         <div>
