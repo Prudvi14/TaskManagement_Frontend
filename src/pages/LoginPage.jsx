@@ -1,6 +1,25 @@
-const LoginPage = () => {
+const LoginPage = ({ afterLogin }) => {
     const handleLogin = async (e) => {
-        // H.W. --> login
+        e.preventDefault();
+        const resp = await fetch(import.meta.env.VITE_BACKEND_URL + "/users/login", {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify({
+                email: e.target.email.value,
+                password: e.target.password.value,
+            }),
+            headers: {
+                "content-type": "application/json",
+            },
+        });
+        const respObj = await resp.json();
+        console.log(resp);
+        console.log(respObj);
+        if (respObj.status === "success") {
+            afterLogin(respObj);
+        } else {
+            alert(respObj.message);
+        }
     };
     return (
         <div>
