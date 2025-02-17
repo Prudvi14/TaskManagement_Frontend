@@ -4,10 +4,10 @@ import Navbar from "../components/navbar";
 // and we are passing on it to the navbar component
 // this way of passing props is called: PROP DRILLING
 
-const HomePage = ({ currUser }) => {
+const HomePage = ({ currUser, handleLogout }) => {
     return (
         <div>
-            <Navbar currUser={currUser} />
+            <Navbar currUser={currUser} handleLogout={handleLogout} />
             <h1>Home Page</h1>
         </div>
     );
