@@ -14,7 +14,6 @@ const Navbar = ({ currUser, handleLogout }) => {
     );
 };
 
-
 export default Navbar;
 
 // Inline styles for the Navbar component
