@@ -1,16 +1,47 @@
-import Navbar from "../components/navbar";
-
-// we are getting currUser prop from App.jsx
-// and we are passing on it to the navbar component
-// this way of passing props is called: PROP DRILLING
+import Navbar from "../components/Navbar";
 
 const HomePage = ({ currUser, handleLogout }) => {
     return (
-        <div>
+        <div style={styles.container}>
+            {/* Navbar */}
             <Navbar currUser={currUser} handleLogout={handleLogout} />
-            <h1>Home Page</h1>
+
+            {/* Main Content */}
+            <div style={styles.content}>
+                <h1>Welcome to the Home Page</h1>
+                <p>Hello, {currUser.fullName}! You are now logged in.</p>
+            </div>
+
+            {/* Footer */}
+            <footer style={styles.footer}>
+                <p>&copy; 2023 Task Management App. All rights reserved.</p>
+            </footer>
         </div>
     );
 };
 
 export default HomePage;
+
+// Inline styles for the component
+const styles = {
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh", // Full viewport height
+        backgroundColor: "#f5f5f5", // Light gray background
+    },
+    content: {
+        flex: 1, // Takes up remaining space
+        padding: "20px",
+        textAlign: "center",
+    },
+    footer: {
+        backgroundColor: "#333", // Dark background
+        color: "#fff", // White text
+        textAlign: "center",
+        padding: "10px",
+        position: "relative",
+        bottom: 0,
+        width: "100%",
+    },
+};
