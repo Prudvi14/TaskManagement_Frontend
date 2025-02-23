@@ -22,14 +22,6 @@ const TaskForm = ({ getData }) => {
     const handleAddTask = (e) => {
         e.preventDefault();
         if (e.target.assignee.value.length > 3) {
-            // console.log(e.target.taskTitle.value);
-            // console.log(e.target[1].value);
-            // console.log(e.target[2].value);
-            // console.log(e.target[3].value);
-            // console.log(e.target.taskTitle.value);
-            // console.log(e.target.assignee.value);
-            // console.log(e.target.deadline.value);
-            // console.log(e.target.priority.value);
             const dataObj = {
                 taskTitle: e.target.taskTitle.value,
                 assignee: e.target.assignee.value,
@@ -74,7 +66,6 @@ const TaskForm = ({ getData }) => {
     );
 };
 
-// https://legacy.reactjs.org/docs/typechecking-with-proptypes.html
 TaskForm.propTypes = {
     getData: PropTypes.func.isRequired,
 };

@@ -1,178 +1,216 @@
 import { useState } from "react";
-import "./taskList.css"; //ES6
-import PropTypes from "prop-types";
-// require("./taskList.css") // CJS
+import "./TaskList.css";
 
-// re-render === re-run the function
 const TaskList = ({ list, getData, filterObj, title }) => {
-    // HW, TODO : add prop validation
     const [editTask, setEditTask] = useState(-1);
     const [editObject, setEditObject] = useState({});
-    // console.log("🟡 : editObject:", editObject);
-    // console.log("🟡 : editTask:", editTask); // 2
 
     const handleEditField = (key, value) => {
-        // console.log(key, value);
-        setEditObject((prev) => {
-            const newObj = { ...prev };
-            newObj[key] = value;
-            return newObj;
-        });
+        setEditObject((prev) => ({ ...prev, [key]: value }));
     };
 
     const handleEditData = async () => {
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tasks/${editObject._id}`, {
-            method: "PATCH",
-            body: JSON.stringify(editObject),
-            headers: {
-                "content-type": "application/json",
-            },
-        });
+        const resp = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/tasks/${editObject._id}`,
+            {
+                method: "PATCH",
+                body: JSON.stringify(editObject),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
         const respObj = await resp.json();
         if (respObj.status === "success") {
-            console.log("success :: updated");
-            handleCancel();
+            setEditTask(-1);
+            setEditObject({});
             getData();
         } else {
             alert(respObj.message);
         }
     };
 
-    const handleCancel = () => {
-        setEditTask(-1);
-        setEditObject({});
-    };
-
     const handleDelete = async (taskId) => {
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tasks/${taskId}`, {
-            method: "DELETE",
-        });
-        console.log("🟡 : resp:", resp);
+        const resp = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/tasks/${taskId}`,
+            {
+                method: "DELETE",
+            }
+        );
         if (resp.status === 204) {
-            console.log("success :: deleted");
             getData();
         } else {
             alert("Error in delete");
         }
     };
 
-    const filteredList = list.filter((elem) => {
-        if (elem.status === filterObj.status) return true;
-        else return false;
-    });
-
     const handleMarkAsDone = async (taskId) => {
-        const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tasks/${taskId}`, {
-            method: "PATCH",
-            body: JSON.stringify({
-                status: "done",
-            }),
-            headers: {
-                "content-type": "application/json",
-            },
-        });
+        const resp = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/tasks/${taskId}`,
+            {
+                method: "PATCH",
+                body: JSON.stringify({ status: "done" }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
         const respObj = await resp.json();
         if (respObj.status === "success") {
-            console.log("success :: updated");
             getData();
         } else {
             alert(respObj.message);
         }
     };
 
+    const filteredList = list.filter((elem) => elem.status === filterObj.status);
+
     return (
-        <div className="task-list-main">
-            <h3 className="task-list-title">{title}</h3>
-            <div className="task-list-task-container">
-                {filteredList.map((elem, idx) => {
-                    // key :: best: unique property on your own, good: index, worst: nothing as key
-                    return (
-                        <div key={elem._id} className="task-card">
-                            <h5>{idx}</h5>
-                            <p>{elem.workTitle}</p>
-                            <p>{elem.taskTitle}</p>
-                            {/* short hand of if - else  */}
-                            {/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator */}
-                            {idx === editTask ? (
-                                <div>
-                                    <label>Assignee</label>
-                                    <input
-                                        value={editObject.assignee}
-                                        onChange={(e) => {
-                                            handleEditField("assignee", e.target.value);
-                                        }}
-                                    />
-                                    {/* controlled  input*/}
-                                </div>
-                            ) : (
-                                <p>{elem.assignee}</p>
-                            )}
-                            <p>{elem.assignor}</p>
-                            <p>{elem.deadline}</p>
-                            {idx === editTask ? (
-                                <div>
-                                    <label>Priority</label>
-                                    <select
-                                        name="priority"
-                                        value={editObject.priority}
-                                        onChange={(e) => {
-                                            handleEditField("priority", e.target.value);
-                                        }}
-                                    >
-                                        <option value="normal">Normal</option>
-                                        <option value="low">Low</option>
-                                        <option value="high">High</option>
-                                        <option value="urgent">Urgent</option>
-                                    </select>
-                                    {/* controlled  input*/}
-                                </div>
-                            ) : (
-                                <p>{elem.priority}</p>
-                            )}
-
-                            <p>{elem.status}</p>
-                            {idx === editTask ? (
-                                <div>
-                                    <button onClick={handleEditData}>Submit Changes</button>
-                                    <button onClick={handleCancel}>Cancel</button>
-                                </div>
-                            ) : (
-                                <button
-                                    onClick={() => {
-                                        setEditObject(elem);
-                                        setEditTask(idx);
-                                    }}
+        <div style={styles.taskList}>
+            <h3 style={styles.taskListTitle}>{title}</h3>
+            <div style={styles.taskContainer}>
+                {filteredList.map((elem, idx) => (
+                    <div key={elem._id} style={styles.taskCard}>
+                        <h5 style={styles.taskTitle}>{elem.taskTitle}</h5>
+                        <p style={styles.taskAssignee}>Assignee: {elem.assignee}</p>
+                        <p style={styles.taskDeadline}>Deadline: {elem.deadline}</p>
+                        <p style={styles.taskPriority}>Priority: {elem.priority}</p>
+                        {idx === editTask ? (
+                            <div style={styles.editForm}>
+                                <input
+                                    value={editObject.assignee}
+                                    onChange={(e) =>
+                                        handleEditField("assignee", e.target.value)
+                                    }
+                                    style={styles.editInput}
+                                />
+                                <select
+                                    value={editObject.priority}
+                                    onChange={(e) =>
+                                        handleEditField("priority", e.target.value)
+                                    }
+                                    style={styles.editInput}
                                 >
-                                    Edit
+                                    <option value="normal">Normal</option>
+                                    <option value="low">Low</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                                <button onClick={handleEditData} style={styles.editButton}>
+                                    Save
                                 </button>
-                            )}
-
+                                <button
+                                    onClick={() => setEditTask(-1)}
+                                    style={styles.editButton}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        ) : (
                             <button
                                 onClick={() => {
-                                    handleDelete(elem._id);
+                                    setEditObject(elem);
+                                    setEditTask(idx);
                                 }}
+                                style={styles.editButton}
                             >
-                                Delete
+                                Edit
                             </button>
-                            <button
-                                onClick={() => {
-                                    handleMarkAsDone(elem._id);
-                                }}
-                            >
-                                Mark as Done
-                            </button>
-                        </div>
-                    );
-                })}
+                        )}
+                        <button
+                            onClick={() => handleDelete(elem._id)}
+                            style={styles.deleteButton}
+                        >
+                            Delete
+                        </button>
+                        <button
+                            onClick={() => handleMarkAsDone(elem._id)}
+                            style={styles.doneButton}
+                        >
+                            Mark as Done
+                        </button>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
 
-// https://legacy.reactjs.org/docs/typechecking-with-proptypes.html
-TaskList.propTypes = {
-    list: PropTypes.array,
-    getData: PropTypes.func,
+// Styling
+const styles = {
+    taskList: {
+        flex: 1,
+        backgroundColor: "white",
+        padding: "1.5rem",
+        borderRadius: "8px",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+    },
+    taskListTitle: {
+        color: "#333",
+        marginBottom: "1rem",
+    },
+    taskContainer: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+    },
+    taskCard: {
+        backgroundColor: "#f9f9f9",
+        padding: "1rem",
+        borderRadius: "8px",
+        border: "1px solid #ddd",
+    },
+    taskTitle: {
+        color: "#333",
+        marginBottom: "0.5rem",
+    },
+    taskAssignee: {
+        color: "#666",
+        marginBottom: "0.5rem",
+    },
+    taskDeadline: {
+        color: "#666",
+        marginBottom: "0.5rem",
+    },
+    taskPriority: {
+        color: "#666",
+        marginBottom: "0.5rem",
+    },
+    editForm: {
+        display: "flex",
+        gap: "0.5rem",
+        marginBottom: "0.5rem",
+    },
+    editInput: {
+        padding: "0.5rem",
+        borderRadius: "4px",
+        border: "1px solid #ddd",
+    },
+    editButton: {
+        backgroundColor: "#007bff",
+        color: "white",
+        padding: "0.5rem 1rem",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+    },
+    deleteButton: {
+        backgroundColor: "#ff4d4d",
+        color: "white",
+        padding: "0.5rem 1rem",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+        marginRight: "0.5rem",
+    },
+    doneButton: {
+        backgroundColor: "#28a745",
+        color: "white",
+        padding: "0.5rem 1rem",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+    },
 };
 
 export default TaskList;

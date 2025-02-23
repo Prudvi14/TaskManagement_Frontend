@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -66,7 +66,7 @@ const App = () => {
         <div>
             <BrowserRouter>
                 <Routes>
-                    {/* Default route: Redirect to Home Page */}
+                    {/* Home Page with nested routes */}
                     <Route
                         path="/"
                         element={
@@ -76,28 +76,29 @@ const App = () => {
                                 <Navigate to="/login" />
                             )
                         }
-                    />
+                    >
+                        {/* Nested route for Tasks */}
+                        <Route path="tasks" element={<TaskPage />} />
+                    </Route>
+
                     {/* Login Page */}
                     <Route
                         path="/login"
                         element={currUser.isLoggedIn ? <Navigate to="/" /> : <LoginPage afterLogin={afterLogin} />}
                     />
+
                     {/* Signup Page */}
                     <Route
                         path="/sign-up"
                         element={currUser.isLoggedIn ? <Navigate to="/" /> : <SignUpPage />}
                     />
-                    {/* Tasks Page */}
-                    <Route
-                        path="/tasks"
-                        element={currUser.isLoggedIn ? <TaskPage /> : <Navigate to="/login" />}
-                    />
+
                     {/* Catch-all route: Redirect to Home Page */}
                     <Route
                         path="*"
                         element={
                             currUser.isLoggedIn ? (
-                                <HomePage currUser={currUser} handleLogout={handleLogout} />
+                                <Navigate to="/" />
                             ) : (
                                 <Navigate to="/login" />
                             )

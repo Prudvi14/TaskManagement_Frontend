@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import { Outlet } from "react-router-dom";
 
 const HomePage = ({ currUser, handleLogout }) => {
     return (
@@ -10,6 +11,9 @@ const HomePage = ({ currUser, handleLogout }) => {
             <div style={styles.content}>
                 <h1>Welcome to the Home Page</h1>
                 <p>Hello, {currUser.fullName}! You are now logged in.</p>
+
+                {/* Outlet for nested routes (e.g., Tasks) */}
+                <Outlet />
             </div>
 
             {/* Footer */}
