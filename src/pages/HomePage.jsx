@@ -1,22 +1,17 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../components/navbar";
 import { Outlet } from "react-router-dom";
 
 const HomePage = ({ currUser, handleLogout }) => {
     return (
         <div style={styles.container}>
-            {/* Navbar */}
             <Navbar currUser={currUser} handleLogout={handleLogout} />
 
-            {/* Main Content */}
             <div style={styles.content}>
                 <h1>Welcome to the Home Page</h1>
                 <p>Hello, {currUser.fullName}! You are now logged in.</p>
 
-                {/* Outlet for nested routes (e.g., Tasks) */}
                 <Outlet />
             </div>
-
-            {/* Footer */}
             <footer style={styles.footer}>
                 <p>&copy; 2023 Task Management App. All rights reserved.</p>
             </footer>
@@ -25,8 +20,6 @@ const HomePage = ({ currUser, handleLogout }) => {
 };
 
 export default HomePage;
-
-// Inline styles for the component
 const styles = {
     container: {
         display: "flex",
